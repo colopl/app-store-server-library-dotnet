@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Company>Mimo</Company>
+        <PackageId>Mimo.AppStoreServerLibraryDotnet</PackageId>
+        <Authors>Mimo</Authors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Flurl.Http" Version="4.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.0-preview1" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.0-preview1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="AppleRootCertificate\AppleRootCA-G3.cer" />
+      <EmbeddedResource Include="AppleRootCertificate\AppleRootCA-G3.cer">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

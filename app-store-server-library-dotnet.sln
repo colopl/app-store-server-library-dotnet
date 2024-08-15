@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnet", "src\AppStoreServerLibraryDotnet.csproj", "{07591682-FEF0-4441-A504-C479651AA37A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnetTests", "tests\AppStoreServerLibraryDotnetTests.csproj", "{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnetDemo", "demo\AppStoreServerLibraryDotnetDemo.csproj", "{FC298256-8380-4395-A63E-CEAEC8AA3092}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C954DFAF-BC21-45AF-81FE-AC8FEA448A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C954DFAF-BC21-45AF-81FE-AC8FEA448A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C954DFAF-BC21-45AF-81FE-AC8FEA448A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C954DFAF-BC21-45AF-81FE-AC8FEA448A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07591682-FEF0-4441-A504-C479651AA37A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07591682-FEF0-4441-A504-C479651AA37A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07591682-FEF0-4441-A504-C479651AA37A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07591682-FEF0-4441-A504-C479651AA37A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{07591682-FEF0-4441-A504-C479651AA37A} = {6FFAC81E-8532-4184-926E-00179E3DC1B4}
+		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80} = {56073F74-7699-4BB8-A259-5EDC919864CD}
+		{FC298256-8380-4395-A63E-CEAEC8AA3092} = {16DB2FA6-ED6F-4D59-BE22-76A1C57A557F}
+	EndGlobalSection
+EndGlobal

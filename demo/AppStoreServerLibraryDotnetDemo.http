@@ -1,0 +1,54 @@
+@AppStoreServerLibraryDotnetDemo_HostAddress = http://localhost:5074
+
+// API requests
+### GetAppStoreServerApiToken
+GET {{AppStoreServerLibraryDotnetDemo_HostAddress}}/auth-token/
+Accept: application/json
+
+### GetAllSubscriptionStatuses
+GET {{AppStoreServerLibraryDotnetDemo_HostAddress}}/get-subscriptions-status/2000000111111111
+Accept: application/json
+
+### GetTransactionHistory
+GET {{AppStoreServerLibraryDotnetDemo_HostAddress}}/get-notification-history-last-week/
+Accept: application/json
+
+### GetNotificationHistory
+GET {{AppStoreServerLibraryDotnetDemo_HostAddress}}/get-transaction-history/2000000111111111
+Accept: application/json
+
+//Data Verifier requests
+### VerifyAndDecodeNotification
+POST {{AppStoreServerLibraryDotnetDemo_HostAddress}}/verify-decode-notification
+Content-Type: application/json
+
+{
+ "Payload" : "test-notification"
+}
+
+### VerifyAndDecodeTransaction
+POST {{AppStoreServerLibraryDotnetDemo_HostAddress}}/verify-decode-transaction
+Content-Type: application/json
+
+{
+  "Payload" : "test-transaction"
+}
+
+### VerifyAndDecodeRenewalInfo
+POST {{AppStoreServerLibraryDotnetDemo_HostAddress}}/verify-decode-renewal
+Content-Type: application/json
+
+{
+  "Payload" : "test-renewal-info"
+}
+
+### ExtractTransactionIdFromAppReceipt
+//Receipt utility requests
+POST {{AppStoreServerLibraryDotnetDemo_HostAddress}}/extract-receipt-transaction-id
+Content-Type: application/json
+
+{
+  "Receipt" : "test-receipt"
+}
+
+###

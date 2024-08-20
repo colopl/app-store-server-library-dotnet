@@ -7,6 +7,15 @@
         <Company>Mimo</Company>
         <PackageId>Mimo.AppStoreServerLibraryDotnet</PackageId>
         <Authors>Mimo</Authors>
+        <Title>Mimo.AppStoreServerLibraryDotnet</Title>
+        <Description>An unofficial .NET SDK for App Store Server Notifications and API</Description>
+        <Copyright>Copyright © Mimo GmbH 2024</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/getmimo/app-store-server-library-dotnet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/getmimo/app-store-server-library-dotnet</RepositoryUrl>
+        <PackageTags>Apple, StoreKit 2, App Store Server Notifications, App Store Server API, App Store Server Library, AppStore</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,8 +23,8 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.0-preview1" />
-      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.0-preview1" />
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.1" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,6 +32,7 @@
       <EmbeddedResource Include="AppleRootCertificate\AppleRootCA-G3.cer">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

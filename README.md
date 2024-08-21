@@ -41,7 +41,7 @@ TBD
 
 ## Usage
 The library is designed to be used in the same way as the official Apple libraries.
-**A demo project is available in the repository to show how to use the library.**
+**A demo project is available in the repository to demonstrate how to use the library.**
 
 ### Configuration
 First set your configuration in your appsettings.json file:
@@ -77,10 +77,10 @@ From there you can start using the library.
 ### Notification Verification
 Here is an example of how to verify a notification:
 ```csharp
-app.MapPost("/verify-decode-notification", (ISignedDataVerifier signedDataVerifier, DecodePayloadRequest request) =>
+app.MapPost("/verify-decode-notification", (ISignedDataVerifier signedDataVerifier, ResponseBodyV2 request) =>
     {
         //First decode the notification
-        var decodedNotificaiton = signedDataVerifier.VerifyAndDecodeNotification(request.Payload);
+        var decodedNotificaiton = signedDataVerifier.VerifyAndDecodeNotification(request.SignedPayload);
         
         //Then you can decode the transaction
         JwsTransactionDecodedPayload decodedTransaction =
@@ -99,6 +99,11 @@ Once you get the decoded transaction, you can use `VerifyAndDecodeTransaction` a
 
 Note that the payload sent by Apple is in camel case.
 
+> [!IMPORTANT]  
+> The `SignedDataVerifier` will not verify the payload if your `ASPNETCORE_ENVIRONMENT` env variable is `Development`. This was done to allow testing fake payloads locally without the need to verify them. Make sure that you set the env variable to something else (`Testing`, `Production`..) if you need to verify the payload.
+> 
+> [See this line of code for more details](https://github.com/getmimo/app-store-server-library-dotnet/blob/main/src/SignedDataVerifier.cs#L140).
+
 
 ### API
 Here is an example of how to get all notification history for a specific transaction using the `Pagination token` : 
@@ -116,11 +121,14 @@ NotificationHistoryRequest appStoreRequest = new()
     TransactionId = request.TransactionId
 };
 
-NotificationHistoryResponse? notifications = await appStoreServerClient.GetNotificationHistory(appStoreRequest);
+NotificationHistoryResponse? notifications = 
+    await appStoreServerClient.GetNotificationHistory(appStoreRequest);
 
 if (notifications != null)
 {
-    //ExtractNotificationInfo is a helper method that will ISignedDataVerifier.VerifyAndDecodeNotification for each notification and extract any required info
+    //For clarity of this example, ExtractNotificationInfo is a helper method that will 
+    //call ISignedDataVerifier.VerifyAndDecodeNotification for each notification and 
+    //extract any required info
     results.Transactions.AddRange(await this.ExtractNotificationInfo(notifications));
 
     //While there are more notifications to get, get them
@@ -169,4 +177,4 @@ ReceiptUtility utility = new ReceiptUtility();
 string transactionId = utility.ExtractTransactionIdFromAppReceipt(receiptData);
 ```
 
-Note that the Receipt Utility is not injectable and should be instanciated when needed.
+Note that the Receipt Utility is not injectable and should be instantiated when needed.

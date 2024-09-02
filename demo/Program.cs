@@ -1,7 +1,7 @@
-using AppStoreServerLibraryDotnet;
-using AppStoreServerLibraryDotnet.Configuration;
-using AppStoreServerLibraryDotnet.Extensions;
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet;
+using Mimo.AppStoreServerLibraryDotnet.Configuration;
+using Mimo.AppStoreServerLibraryDotnet.Extensions;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);

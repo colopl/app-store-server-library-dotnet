@@ -1,8 +1,8 @@
-using AppStoreServerLibraryDotnet.Configuration;
+using Mimo.AppStoreServerLibraryDotnet.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AppStoreServerLibraryDotnet.Extensions;
+namespace Mimo.AppStoreServerLibraryDotnet.Extensions;
 
 public static class AppStoreServerServiceCollectionExtensions
 {

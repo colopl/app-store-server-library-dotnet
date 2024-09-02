@@ -1,4 +1,4 @@
-namespace AppStoreServerLibraryDotnet.Models;
+namespace Mimo.AppStoreServerLibraryDotnet.Models;
 
 /// <summary>
 /// The response body the App Store sends in a version 2 server notification.
@@ -259,7 +259,7 @@ public class JwsTransactionDecodedPayload
     /// 0 : The App Store refunded the transaction on behalf of the customer for other reasons, for example, an accidental purchase.
     /// 1 : The App Store refunded the transaction on behalf of the customer due to an actual or perceived issue within your app.
     /// </summary>
-    public string? RevocationReason { get; set; }
+    public int? RevocationReason { get; set; }
 
     /// <summary>
     /// The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature (JWS) data.
@@ -611,7 +611,7 @@ public class TransactionHistoryResponse
 /// </summary>
 public class ErrorResponse
 {
-    public int ErrorCode { get; set; }
+    public int ErrorCode { get; set; } = 0;
     public string ErrorMessage { get; set; } = null!;
 }
 

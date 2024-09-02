@@ -16,6 +16,8 @@
         <PackageTags>Apple, StoreKit 2, App Store Server Notifications, App Store Server API, App Store Server Library, AppStore</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <AssemblyName>Mimo.AppStoreServerLibraryDotnet</AssemblyName>
+        <RootNamespace>Mimo.AppStoreServerLibraryDotnet</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

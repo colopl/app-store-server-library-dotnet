@@ -1,11 +1,11 @@
-using AppStoreServerLibraryDotnet;
-using AppStoreServerLibraryDotnet.Configuration;
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet;
+using Mimo.AppStoreServerLibraryDotnet.Configuration;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
-namespace AppStoreServerLibraryDotnetTests;
+namespace Mimo.AppStoreServerLibraryDotnetTests;
 
 /// <summary>
 /// In this test class the input Data was generated in two ways :

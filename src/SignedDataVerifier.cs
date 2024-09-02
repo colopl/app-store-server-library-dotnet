@@ -1,14 +1,14 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
-using AppStoreServerLibraryDotnet.Configuration;
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet.Configuration;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibraryDotnet;
 
 public class SignedDataVerifier(
     ILogger<SignedDataVerifier> logger,

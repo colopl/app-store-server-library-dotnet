@@ -8,6 +8,8 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <Company>Mimo</Company>
+        <AssemblyName>Mimo.AppStoreServerLibraryDotnetTests</AssemblyName>
+        <RootNamespace>Mimo.AppStoreServerLibraryDotnetTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

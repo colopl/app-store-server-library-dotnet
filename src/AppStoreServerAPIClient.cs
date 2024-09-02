@@ -1,15 +1,16 @@
+using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text.Json;
-using AppStoreServerLibraryDotnet.Configuration;
-using AppStoreServerLibraryDotnet.Exceptions;
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet.Configuration;
+using Mimo.AppStoreServerLibraryDotnet.Exceptions;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 using Flurl.Http;
 using Flurl.Http.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibraryDotnet;
 
 public class AppStoreServerAPIClient(
     IOptions<AppleOptions> appleOptions)
@@ -25,6 +26,26 @@ public class AppStoreServerAPIClient(
     /// <returns>Signed JWT</returns>
     public string GetAppStoreServerApiToken(string keyId, string issuerId, string privateKey, string bundleId)
     {
+        if(string.IsNullOrEmpty(keyId))
+        {
+            throw new ArgumentNullException(nameof(keyId), "AppStoreServerApiKeyId was not provided. Please check your configuration.");
+        }
+
+        if(string.IsNullOrEmpty(issuerId))
+        {
+            throw new ArgumentNullException(nameof(issuerId), "AppStoreServerApiIssuerId was not provided. Please check your configuration.");
+        }
+
+        if(string.IsNullOrEmpty(privateKey))
+        {
+            throw new ArgumentNullException(nameof(privateKey), "AppStoreServerApiSubscriptionKey was not provided. Please check your configuration.");
+        }
+
+        if (!Base64.IsValid(privateKey))
+        {
+            throw new ArgumentNullException(nameof(privateKey), $"AppStoreServerApiSubscriptionKey is not a valid Base64 string");
+        }
+        
         ReadOnlySpan<byte> keyAsSpan = Convert.FromBase64String(privateKey);
         var prvKey = ECDsa.Create();
         prvKey.ImportPkcs8PrivateKey(keyAsSpan, out int _);

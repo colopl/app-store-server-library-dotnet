@@ -1,6 +1,6 @@
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 
-namespace AppStoreServerLibraryDotnet.Exceptions;
+namespace Mimo.AppStoreServerLibraryDotnet.Exceptions;
 
 public class AppStoreServerApiException(string message, ErrorResponse errorResponse) : Exception(message)
 {

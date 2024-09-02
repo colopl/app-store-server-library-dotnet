@@ -1,6 +1,6 @@
-using AppStoreServerLibraryDotnet;
+using Mimo.AppStoreServerLibraryDotnet;
 
-namespace AppStoreServerLibraryDotnetTests;
+namespace Mimo.AppStoreServerLibraryDotnetTests;
 
 public class ReceiptUtilityTest
 {

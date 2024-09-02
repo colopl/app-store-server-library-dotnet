@@ -69,7 +69,11 @@ If you intend to use the API features, you need to set the `AppStoreServerApiKey
 
 A helper method is available to add the library services to the DI container:
 ```csharp
-services.AddAppStoreServerLibrary(Configuration);
+using Mimo.AppStoreServerLibraryDotnet.Extensions;
+
+...
+
+builder.Services.AddAppStoreServerLibrary(builder.Configuration);
 ```
 
 From there you can start using the library.
@@ -77,21 +81,24 @@ From there you can start using the library.
 ### Notification Verification
 Here is an example of how to verify a notification:
 ```csharp
-app.MapPost("/verify-decode-notification", (ISignedDataVerifier signedDataVerifier, ResponseBodyV2 request) =>
+//This is the endpoint you could use to receive the notifications from Apple
+app.MapPost("/verify-decode-notification", async (ISignedDataVerifier signedDataVerifier, [FromBody] ResponseBodyV2 request) =>
     {
         //First decode the notification
-        var decodedNotificaiton = signedDataVerifier.VerifyAndDecodeNotification(request.SignedPayload);
+        var decodedNotificaiton =  await signedDataVerifier.VerifyAndDecodeNotification(request.SignedPayload);
         
         //Then you can decode the transaction
         JwsTransactionDecodedPayload decodedTransaction =
-            await signedDataVerifier.VerifyAndDecodeTransaction(decodedNotificaiton.SignedTransactionInfo!);
-
+            await signedDataVerifier.VerifyAndDecodeTransaction(decodedNotificaiton.Data.SignedTransactionInfo!);
+        
         //And the renewal info
         JWSRenewalInfoDecodedPayload decodedRenewalInfo =
-            await signedDataVerifier.VerifyAndDecodeRenewalInfo(decodedNotificaiton.SignedRenewalInfo!);
+            await signedDataVerifier.VerifyAndDecodeRenewalInfo(decodedNotificaiton.Data.SignedRenewalInfo!);
         
-        return Ok(decodedNotificaiton);
-    }
+        return decodedNotificaiton;
+    })
+    .WithName("VerifyAndDecodeNotification")
+    .WithOpenApi();
 ```
 
 If the verification fails it will raise a `InvalidOperationException` exception with failure details.
@@ -149,16 +156,19 @@ And another example on how to get the subscription status for a specific subscri
 
 ```csharp
 string transactionId = "your-transaction-id";
-SubscriptionStatusResponse response = appStoreServerClient.GetAllSubscriptionStatuses(transactionId);
+
+//Inject IAppStoreServerAPIClient as appStoreServerClient to use the API
+SubscriptionStatusResponse response = await appStoreServerClient.GetAllSubscriptionStatuses(transactionId);
 
 //As we retrieved the subscription status based on the original transaction id, the response already contains only
 //the TransactionItem related to the subscription we are looking for
 //Also the LastTransactions property, if we believe the documentation, only contains the most recent transaction.
 //It means that even if it's a list it should contain only one item.
-SubscriptionStatusLastTransactionsItem lastRemoteTransaction = response.data
+SubscriptionStatusLastTransactionsItem lastRemoteTransaction = response.Data
     .Last()
     .LastTransactions.Last();
 
+//And inject ISignedDataVerifier as signedDataVerifier to decode the transaction and renewal info
 JwsTransactionDecodedPayload decodedTransaction =
     await signedDataVerifier.VerifyAndDecodeTransaction(lastRemoteTransaction.SignedTransactionInfo!);
 

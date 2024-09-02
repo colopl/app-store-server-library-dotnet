@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <Company>Mimo</Company>
+        <AssemblyName>Mimo.AppStoreServerLibraryDotnetDemo</AssemblyName>
+        <RootNamespace>Mimo.AppStoreServerLibraryDotnetDemo</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

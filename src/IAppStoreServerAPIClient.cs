@@ -1,6 +1,6 @@
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 
-namespace AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibraryDotnet;
 
 public interface IAppStoreServerAPIClient
 {

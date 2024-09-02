@@ -1,6 +1,6 @@
-using AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibraryDotnet.Models;
 
-namespace AppStoreServerLibraryDotnet.Configuration;
+namespace Mimo.AppStoreServerLibraryDotnet.Configuration;
 
 public class AppleOptions
 {

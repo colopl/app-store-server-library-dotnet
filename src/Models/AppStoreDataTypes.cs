@@ -169,7 +169,7 @@ public class JwsTransactionDecodedPayload
     /// <summary>
     /// A UUID you create at the time of purchase that associates the transaction with a customer on your own service.
     /// </summary>
-    public string AppAccountToken { get; set; } = null!;
+    public string? AppAccountToken { get; set; } = null!;
 
     /// <summary>
     /// The bundle identifier of the app.

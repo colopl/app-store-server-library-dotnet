@@ -53,6 +53,13 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
         return decodedPayload;
     }
 
+    /// <summary>
+    /// Verifies and decodes a signedTransaction obtained from the App Store Server API, an App Store Server Notification, or from a device.
+    /// See <see href="https://developer.apple.com/documentation/appstoreserverapi/jwstransaction">JWSTransaction</see>
+    /// </summary>
+    /// <param name="signedPayload">The signedTransaction field</param>
+    /// <returns>The decoded transaction info after verification</returns>
+    /// <exception cref="VerificationException">Thrown if the data could not be verified</exception>
     public async Task<JwsTransactionDecodedPayload> VerifyAndDecodeTransaction(string signedPayload)
     {
         string payload = await VerifySignedData(signedPayload);
@@ -68,6 +75,13 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
         }
     }
 
+    /// <summary>
+    /// Verifies and decodes a signedRenewalInfo obtained from the App Store Server API, an App Store Server Notification, or from a device.
+    /// See <see href="https://developer.apple.com/documentation/appstoreserverapi/jwsrenewalinfo">JWSRenewalInfo</see>
+    /// </summary>
+    /// <param name="signedPayload">The signedRenewalInfo field</param>
+    /// <returns>The decoded renewal info after verification</returns>
+    /// <exception cref="VerificationException">Thrown if the data could not be verified</exception>
     public async Task<JWSRenewalInfoDecodedPayload> VerifyAndDecodeRenewalInfo(string signedPayload)
     {
         string payload = await VerifySignedData(signedPayload);

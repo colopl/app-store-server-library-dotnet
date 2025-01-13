@@ -1,18 +1,14 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
-using Mimo.AppStoreServerLibraryDotnet.Configuration;
 using Mimo.AppStoreServerLibraryDotnet.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Mimo.AppStoreServerLibraryDotnet.Exceptions;
 
 namespace Mimo.AppStoreServerLibraryDotnet;
 
-public class SignedDataVerifier(
-    ILogger<SignedDataVerifier> logger,
-    IOptions<AppleOptions> options) : ISignedDataVerifier
+public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineChecks, AppStoreEnvironment environment, string bundleId, int? appAppleId)
 {
     // It's recommended to reuse the JsonSerializerOptions instance.
     // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/configure-options?pivots=dotnet-8-0#reuse-jsonserializeroptions-instances
@@ -21,42 +17,37 @@ public class SignedDataVerifier(
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
+    /// <summary>
+    /// Verifies and decodes an App Store Server Notification signedPayload.
+    /// See <see href="https://developer.apple.com/documentation/appstoreservernotifications/signedpayload">signedPayload</see>
+    /// </summary>
+    /// <param name="signedPayload">The payload received by your server</param>
+    /// <returns>The decoded payload after verification</returns>
+    /// <exception cref="VerificationException">Thrown if the data could not be verified</exception>
     public async Task<ResponseBodyV2DecodedPayload> VerifyAndDecodeNotification(string signedPayload)
     {
-        return await VerifyAndDecodeNotification(options.Value.Environment, options.Value.BundleId, signedPayload);
-    }
-
-    public async Task<ResponseBodyV2DecodedPayload> VerifyAndDecodeNotification(string environment, string bundleId, string signedPayload)
-    {
-        VerifySignedDataResult result = await VerifySignedData(signedPayload);
-
-        if (result is VerifySignedDataResult.Failure (var message))
-        {
-            throw new InvalidOperationException(message);
-        }
-
-        var payload = (VerifySignedDataResult.Success) result;
+        string payload = await VerifySignedData(signedPayload);
 
         ResponseBodyV2DecodedPayload decodedPayload;
 
         try
         {
-            decodedPayload = JsonSerializer.Deserialize<ResponseBodyV2DecodedPayload>(payload.Payload, jsonSerializerOptions)!;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, $"Error deserializing notification payload. Payload : {payload.Payload}");
-            throw;
+            decodedPayload = JsonSerializer.Deserialize<ResponseBodyV2DecodedPayload>(payload, jsonSerializerOptions)!;
         }
 
-        if (decodedPayload.Data.Environment != environment)
+        catch
         {
-            throw new InvalidOperationException($"Environment in payload does not match expected environment. Expected : {environment}, Actual : {decodedPayload.Data.Environment}");
+            throw new VerificationException($"Error deserializing notification payload. Payload : {payload}");
+        }
+
+        if (decodedPayload.Data.Environment != environment.Name)
+        {
+            throw new VerificationException($"Environment in payload does not match expected environment. Expected : {environment}, Actual : {decodedPayload.Data.Environment}");
         }
 
         if (decodedPayload.Data.BundleId != bundleId)
         {
-            throw new InvalidOperationException($"BundleId in payload does not match expected bundleId. Expected : {bundleId}, Actual : {decodedPayload.Data.BundleId}");
+            throw new VerificationException($"BundleId in payload does not match expected bundleId. Expected : {bundleId}, Actual : {decodedPayload.Data.BundleId}");
         }
 
         return decodedPayload;
@@ -64,51 +55,35 @@ public class SignedDataVerifier(
 
     public async Task<JwsTransactionDecodedPayload> VerifyAndDecodeTransaction(string signedPayload)
     {
-        VerifySignedDataResult result = await this.VerifySignedData(signedPayload);
-
-        if (result is VerifySignedDataResult.Failure(var message))
-        {
-            logger.LogError(message);
-            throw new InvalidOperationException(message);
-        }
-
-        var payload = (VerifySignedDataResult.Success) result;
+        string payload = await VerifySignedData(signedPayload);
 
         try
         {
-            return JsonSerializer.Deserialize<JwsTransactionDecodedPayload>(payload.Payload, jsonSerializerOptions)!;
+            return JsonSerializer.Deserialize<JwsTransactionDecodedPayload>(payload, jsonSerializerOptions)!;
         }
-        catch (Exception ex)
+
+        catch
         {
-            logger.LogError(ex, $"Error deserializing transaction payload. Payload : {payload.Payload}");
-            throw;
+            throw new VerificationException($"Error deserializing transaction payload. Payload : {payload}");
         }
     }
 
     public async Task<JWSRenewalInfoDecodedPayload> VerifyAndDecodeRenewalInfo(string signedPayload)
     {
-        VerifySignedDataResult result = await this.VerifySignedData(signedPayload);
-
-        if (result is VerifySignedDataResult.Failure(var message))
-        {
-            logger.LogError(message);
-            throw new InvalidOperationException(message);
-        }
-
-        var payload = (VerifySignedDataResult.Success) result;
+        string payload = await VerifySignedData(signedPayload);
 
         try
         {
-            return JsonSerializer.Deserialize<JWSRenewalInfoDecodedPayload>(payload.Payload, jsonSerializerOptions)!;
+            return JsonSerializer.Deserialize<JWSRenewalInfoDecodedPayload>(payload, jsonSerializerOptions)!;
         }
-        catch (Exception ex)
+
+        catch
         {
-            logger.LogError(ex, $"Error deserializing renewal info payload. Payload : {payload.Payload}");
-            throw;
+            throw new VerificationException($"Error deserializing renewal info payload. Payload : {payload}");
         }
     }
 
-    private async Task<VerifySignedDataResult> VerifySignedData(string signedPayload)
+    private async Task<string> VerifySignedData(string signedPayload)
     {
         //1. Verify the payload is composed of 3 parts separated by a dot => Indicates the JWS is well formed
         //2. Decode the payload to verify that there is a header, a payload and a signature => Indicates the JWS is well formed
@@ -116,15 +91,11 @@ public class SignedDataVerifier(
         //4. Verify signature chain and check for revocation
         //5. Get the public key from the leaf certificate (1st certificate in x5c claim) and verify the payloads signature with it.
 
-        //Depends on :
-        //Microsoft.IdentityModel.Tokens
-        //Microsoft.IdentityModel.JsonWebTokens
-
         // Split the payload into 3 parts
         string[] parts = signedPayload.Split('.');
         if (parts.Length != 3)
         {
-            return new VerifySignedDataResult.Failure("Payload does not have the correct format");
+            throw new VerificationException("Payload does not have the correct format");
         }
 
         // Decode the header and the payload , which are the 1st and 2nd parts of the payload
@@ -134,22 +105,20 @@ public class SignedDataVerifier(
 
         var header = JsonSerializer.Deserialize<JWSDecodedHeader>(headerJson, jsonSerializerOptions);
 
-        //Check if Environment is development, in this case data may not be signed by the App Store, and verification should be skipped
-        //This is useful for local development and unit tests
-        //If not configured, the default value is Null for unit tests
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        //Check if Environment is local testing, in this case data may not be signed by the App Store, and verification should be skipped
+        if (environment == AppStoreEnvironment.LocalTesting)
         {
-            return new VerifySignedDataResult.Success(payloadJson);
+            return payloadJson;
         }
 
         if (header?.x5c == null || header.x5c.Length != 3)
         {
-            return new VerifySignedDataResult.Failure("x5c claim is null or has more or less than 3 certificates");
+            throw new VerificationException("x5c claim is null or has more or less than 3 certificates");
         }
 
         if (header.Alg != "ES256")
         {
-            return new VerifySignedDataResult.Failure($"Unrecognized JWT algorithm attribute : {header.Alg}");
+            throw new VerificationException($"Unrecognized JWT algorithm attribute : {header.Alg}");
         }
 
         //We don't include the root cert in the path, we use the one downloaded from https://www.apple.com/certificateauthority/AppleRootCA-G3.cer
@@ -167,7 +136,7 @@ public class SignedDataVerifier(
 
         if (!certChainIsValid)
         {
-            return new VerifySignedDataResult.Failure("Certificate chain is invalid");
+            throw new VerificationException("Certificate chain is invalid");
         }
 
         //We now need to verify the signature using the leaf (first) certificate of the x5c parameter.
@@ -190,11 +159,10 @@ public class SignedDataVerifier(
 
         if (!result.IsValid)
         {
-            return new VerifySignedDataResult.Failure(
-                $"Payload signature could not be verified : {result.Exception.Message}");
+            throw new VerificationException($"Payload signature could not be verified : {result.Exception.Message}");
         }
 
-        return new VerifySignedDataResult.Success(payloadJson);
+        return payloadJson;
     }
 
     /// <summary>
@@ -208,7 +176,7 @@ public class SignedDataVerifier(
         var chain = new X509Chain();
 
         // Apple root intermediate certificate https://www.apple.com/certificateauthority/AppleRootCA-G3.cer
-        var rootCertificate = new X509Certificate2(GetEmbeddedAppleRootCertificate());
+        var rootCertificate = new X509Certificate2(appleRootCertificates);
 
         // Configure the chain to check for certificate revocation online.
         // Online check can result in a longer delay while the certificate authority is contacted.
@@ -216,7 +184,7 @@ public class SignedDataVerifier(
         // https://github.com/apple/app-store-server-library-java/blob/main/src/main/java/com/apple/itunes/storekit/verification/ChainVerifier.java#L70C14-L71C90
         // Also an explanation of the use of OCSP can be found here : https://forums.developer.apple.com/forums/thread/693351
         // The default value for DisableOnlineCertificateRevocationCheck is false
-        chain.ChainPolicy.RevocationMode = options.Value.DisableOnlineCertificateRevocationCheck ?  X509RevocationMode.NoCheck : X509RevocationMode.Online;
+        chain.ChainPolicy.RevocationMode = enableOnlineChecks ? X509RevocationMode.Online : X509RevocationMode.NoCheck;
 
         // By allowing unknown certificates we can avoid adding the Apple root certificate to the trust store
         // It's one less step to take when setting up the environment (docker file)
@@ -240,39 +208,9 @@ public class SignedDataVerifier(
                 message += chainStatus.StatusInformation + " - Status : " + chainStatus.Status;
             }
 
-            logger.LogError(message);
+            throw new VerificationException(message);
         }
 
         return isValid;
     }
-
-    /// <summary>
-    /// Retrieves the Apple root certificate from the embedded resources
-    /// </summary>
-    /// <returns>Apple root certificate in a byte array</returns>
-    private byte[] GetEmbeddedAppleRootCertificate()
-    {
-        string resourceName = "AppStoreServerLibraryDotnet.AppleRootCertificate.AppleRootCA-G3.cer";
-        using var stream = typeof(SignedDataVerifier).Assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
-        {
-            throw new InvalidOperationException($"AppleRoot Certificate not found. Should be embedded there : {resourceName}");
-        }
-
-        using var memoryStream = new MemoryStream();
-        stream.CopyTo(memoryStream);
-        return memoryStream.ToArray();
-    }
-}
-
-/// <summary>
-/// This record is used to return the result of the verification of a signed payload.
-/// </summary>
-internal abstract record VerifySignedDataResult
-{
-    private VerifySignedDataResult() { }
-
-    public record Success(string Payload) : VerifySignedDataResult;
-
-    public record Failure(string Message) : VerifySignedDataResult;
 }

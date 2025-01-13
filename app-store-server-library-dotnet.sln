@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnetTests", "tests\AppStoreServerLibraryDotnetTests.csproj", "{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnetDemo", "demo\AppStoreServerLibraryDotnetDemo.csproj", "{FC298256-8380-4395-A63E-CEAEC8AA3092}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,9 +22,5 @@ Global
 		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC298256-8380-4395-A63E-CEAEC8AA3092}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

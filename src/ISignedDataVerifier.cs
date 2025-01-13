@@ -8,7 +8,7 @@ public interface ISignedDataVerifier
     /// Verify and decode the notification payload.
     /// This signature is kept to be closer to the original implementation.
     /// </summary>
-    /// <param name="environment">The server environment that the notification applies to, either <see cref='AppStoreServerEnvironment.Sandbox'/> or <see cref='AppStoreServerEnvironment.Production'/>.</param>
+    /// <param name="environment">The server environment that the notification applies to, either <see cref='AppStoreEnvironment.Sandbox'/> or <see cref='AppStoreEnvironment.Production'/>.</param>
     /// <param name="bundleId">The expected bundle identifier of the app.</param>
     /// <param name="signedPayload">Encoded payload</param>
     /// <returns>A ResponseBodyV2DecodedPayload object</returns>

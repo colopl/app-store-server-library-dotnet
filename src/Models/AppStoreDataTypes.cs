@@ -614,9 +614,3 @@ public class ErrorResponse
     public int ErrorCode { get; set; } = 0;
     public string ErrorMessage { get; set; } = null!;
 }
-
-public struct AppStoreServerEnvironment
-{
-    public const string Sandbox = "Sandbox";
-    public const string Production = "Production";
-}

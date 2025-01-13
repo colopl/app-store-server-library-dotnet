@@ -14,5 +14,4 @@ public class AppleOptions
     public string AppStoreServerApiIssuerId { get; set; } = string.Empty;
     public string AppStoreServerApiSubscriptionKey { get; set; } = string.Empty;
     public bool DisableOnlineCertificateRevocationCheck { get; set; }
-    public string Environment { get; set; } = AppStoreServerEnvironment.Sandbox;
 }

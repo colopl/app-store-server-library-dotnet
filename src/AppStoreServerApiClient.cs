@@ -1,9 +1,11 @@
+using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using System.Web;
 using Mimo.AppStoreServerLibraryDotnet.Exceptions;
 using Mimo.AppStoreServerLibraryDotnet.Models;
-using Flurl.Http;
-using Flurl.Http.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,8 +19,17 @@ namespace Mimo.AppStoreServerLibraryDotnet;
 /// <param name="issuerId">Your issuer ID from the Keys page in App Store Connect</param>
 /// <param name="bundleId">Your app's bundle ID</param>
 /// <param name="environment">The environment to target</param>
-public class AppStoreServerApiClient(string signingKey, string keyId, string issuerId, string bundleId, AppStoreEnvironment environment)
+/// <param name="httpClient">An optional HttpClient instance to use for requests</param>
+public class AppStoreServerApiClient(
+    string signingKey,
+    string keyId,
+    string issuerId,
+    string bundleId,
+    AppStoreEnvironment environment,
+    HttpClient? httpClient = null)
 {
+    private readonly HttpClient httpClient = httpClient ?? new HttpClient();
+
     /// <summary>
     /// Get the statuses for all of a customer’s auto-renewable subscriptions in your app.
     /// </summary>
@@ -37,7 +48,8 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
     /// Get a list of notifications that the App Store server attempted to send to your server.
     /// </summary>
     /// <returns>A list of notifications and their attempts</returns>
-    public Task<NotificationHistoryResponse?> GetNotificationHistory(NotificationHistoryRequest notificationHistoryRequest,
+    public Task<NotificationHistoryResponse?> GetNotificationHistory(
+        NotificationHistoryRequest notificationHistoryRequest,
         string paginationToken = "")
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
@@ -49,14 +61,16 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
 
         string path = $"v1/notifications/history";
 
-        return this.MakeRequest<NotificationHistoryResponse>(path, HttpMethod.Post, queryParameters, notificationHistoryRequest);
+        return this.MakeRequest<NotificationHistoryResponse>(path, HttpMethod.Post, queryParameters,
+            notificationHistoryRequest);
     }
 
     /// <summary>
     /// Get a customer’s in-app purchase transaction history for your app.
     /// </summary>
     /// <returns>A list of transactions associated with the provided Transaction Id</returns>
-    public async Task<TransactionHistoryResponse?> GetTransactionHistory(string transactionId,
+    public Task<TransactionHistoryResponse?> GetTransactionHistory(
+        string transactionId,
         string revisionToken = "")
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
@@ -68,7 +82,7 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
 
         string path = $"v2/history/{transactionId}";
 
-        return await this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Get, queryParameters);
+        return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Get, queryParameters);
     }
 
     /// <summary>
@@ -84,14 +98,13 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
     {
         string path = $"v1/transactions/consumption/{transactionId}";
 
-        return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Put, null, consumptionRequest);
+        return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Put, null, consumptionRequest, fetchResponse: false);
     }
 
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
     {
-        ReadOnlySpan<byte> keyAsSpan = Convert.FromBase64String(signingKey);
         var prvKey = ECDsa.Create();
-        prvKey.ImportPkcs8PrivateKey(keyAsSpan, out int _);
+        prvKey.ImportFromPem(signingKey);
 
         var securityDescriptor = new SecurityTokenDescriptor
         {
@@ -116,77 +129,83 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
         return new JsonWebTokenHandler().CreateToken(securityDescriptor);
     }
 
-    /// <summary>
-    /// Call the App Store Server API
-    /// </summary>
-    /// <param name="path">Endpoint you need to call</param>
-    /// <param name="method">Http Method : Get, Post, etc.</param>
-    /// <param name="queryParameters">Any query param you need to append</param>
-    /// <param name="body">Query body if required</param>
-    /// <typeparam name="TReturn">The type to deserialize the API response to</typeparam>
-    /// <exception cref="NotSupportedException">Supports only Get and Post http methods</exception>
-    private async Task<TReturn?> MakeRequest<TReturn>(string path, HttpMethod method, Dictionary<string, string>? queryParameters = null,
-        object? body = null)
+    private async Task<TReturn?> MakeRequest<TReturn>(
+        string path,
+        HttpMethod method,
+        Dictionary<string, string>? queryParameters = null,
+        object? body = null,
+        bool fetchResponse = true) where TReturn: class 
     {
         string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
 
-        Uri url = new (environment.BaseUrl, path);
+        Uri url = new(environment.BaseUrl, path);
 
-        TReturn? response;
+        var builder = new UriBuilder(url);
+        if (queryParameters != null && queryParameters.Any())
+        {
+            NameValueCollection query = HttpUtility.ParseQueryString(builder.Query);
+
+            foreach (KeyValuePair<string, string> param in queryParameters)
+            {
+                query[param.Key] = param.Value;
+            }
+
+            builder.Query = query.ToString();
+        }
+
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         try
         {
-            IFlurlRequest request = url
-                .WithOAuthBearerToken(token)
-                .WithSettings(settings => settings.JsonSerializer = new DefaultJsonSerializer(new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                }));
-
-            if (queryParameters != null && queryParameters.Any())
-            {
-                foreach (KeyValuePair<string, string> queryParameter in queryParameters)
-                {
-                    request.SetQueryParam(queryParameter.Key, queryParameter.Value);
-                }
-            }
+            HttpResponseMessage httpResponse;
 
             if (method == HttpMethod.Get)
             {
-                response = await request
-                    .GetAsync()
-                    .ReceiveJson<TReturn>();
+                var request = new HttpRequestMessage(HttpMethod.Get, builder.Uri);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpResponse = await this.httpClient.SendAsync(request);
             }
+
             else if (method == HttpMethod.Post)
             {
-                response = await request
-                    .PostJsonAsync(body)
-                    .ReceiveJson<TReturn>();
+                var request = new HttpRequestMessage(HttpMethod.Post, builder.Uri);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Content = new StringContent(JsonSerializer.Serialize(body, jsonOptions), Encoding.UTF8, "application/json");
+                httpResponse = await this.httpClient.SendAsync(request);
             }
+
             else if (method == HttpMethod.Put)
             {
-                response = await request
-                    .PutJsonAsync(body)
-                    .ReceiveJson<TReturn>();
+                var request = new HttpRequestMessage(HttpMethod.Put, builder.Uri);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Content = new StringContent(JsonSerializer.Serialize(body, jsonOptions), Encoding.UTF8, "application/json");
+                httpResponse = await this.httpClient.SendAsync(request);
             }
+
             else
             {
                 throw new NotSupportedException($"Method {method} not supported");
             }
-        }
-        catch (FlurlHttpException ex)
-        {
-            var error = await ex.GetResponseJsonAsync<ErrorResponse>();
 
-            if (error != null)
+            string responseContent = await httpResponse.Content.ReadAsStringAsync();
+
+            if (httpResponse.IsSuccessStatusCode)
             {
-                throw new ApiException($"Error when calling App Store Server API for endpoint {path}. Received error code: {error.ErrorCode}, Received error message: {error.ErrorMessage}",
-                    error);
+                return fetchResponse ? JsonSerializer.Deserialize<TReturn>(responseContent, jsonOptions) : null;
             }
 
-            //If the error is not in the expected format, rethrow
-            throw;
+            var error = JsonSerializer.Deserialize<ErrorResponse>(responseContent, jsonOptions);
+
+            throw new ApiException(httpResponse.StatusCode, error);
+
         }
 
-        return response;
+        catch (HttpRequestException ex)
+        {
+            throw new ApiException(ex.StatusCode, null, ex);
+        }
     }
 }

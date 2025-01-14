@@ -1,14 +1,18 @@
+using System.Net;
 using Mimo.AppStoreServerLibraryDotnet.Models;
 
 namespace Mimo.AppStoreServerLibraryDotnet.Exceptions;
 
-public class ApiException(string message, ErrorResponse errorResponse) : Exception(message)
+public class ApiException(HttpStatusCode? httpStatusCode, ErrorResponse? errorResponse = null, Exception? innerException = null) : Exception(errorResponse?.ErrorMessage, innerException)
 {
-    public int ApiErrorCode { get; set; } = errorResponse.ErrorCode;
-    public string ApiErrorMessage { get; set; } = errorResponse.ErrorMessage;
+    public HttpStatusCode? HttpStatusCode { get; } = httpStatusCode;
+
+    public int? ApiErrorCode { get; } = errorResponse?.ErrorCode;
+
+    public string? ApiErrorMessage { get; } = errorResponse?.ErrorMessage;
 
     public override string ToString()
     {
-        return base.ToString() + $" ApiErrorCode: {ApiErrorCode}, ApiErrorMessage: {ApiErrorMessage}";
+        return base.ToString() + $" HttpStatusCode: {this.HttpStatusCode}, ApiErrorCode: {this.ApiErrorCode}, ApiErrorMessage: {this.ApiErrorMessage}";
     }
 }

@@ -8,7 +8,6 @@ public class ResponseBodyV2
 {
     /// <summary>
     /// The payload in JSON Web Signature (JWS) format, signed by the App Store.
-    /// The "signedPayload" naming convention (camelCase) for JSON serialization is enforced to align with Superwall's expected JSON format.
     /// </summary>
     public string SignedPayload { get; set; } = null!;
 }

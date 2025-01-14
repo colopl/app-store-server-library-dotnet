@@ -1,6 +1,7 @@
 using Mimo.AppStoreServerLibraryDotnet;
 using Mimo.AppStoreServerLibraryDotnet.Exceptions;
 using Mimo.AppStoreServerLibraryDotnet.Models;
+using Xunit;
 
 namespace Mimo.AppStoreServerLibraryDotnetTests;
 
@@ -12,7 +13,9 @@ namespace Mimo.AppStoreServerLibraryDotnetTests;
 /// </summary>
 public class SignedDataVerifierTest
 {
-    private const string RootCaBase64Encoded = "MIIBgjCCASmgAwIBAgIJALUc5ALiH5pbMAoGCCqGSM49BAMDMDYxCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRIwEAYDVQQHDAlDdXBlcnRpbm8wHhcNMjMwMTA1MjEzMDIyWhcNMzMwMTAyMjEzMDIyWjA2MQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTESMBAGA1UEBwwJQ3VwZXJ0aW5vMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEc+/Bl+gospo6tf9Z7io5tdKdrlN1YdVnqEhEDXDShzdAJPQijamXIMHf8xWWTa1zgoYTxOKpbuJtDplz1XriTaMgMB4wDAYDVR0TBAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwCgYIKoZIzj0EAwMDRwAwRAIgemWQXnMAdTad2JDJWng9U4uBBL5mA7WI05H7oH7c6iQCIHiRqMjNfzUAyiu9h6rOU/K+iTR0I/3Y/NSWsXHX+acc";
+    private const string RootCaBase64Encoded =
+        "MIIBgjCCASmgAwIBAgIJALUc5ALiH5pbMAoGCCqGSM49BAMDMDYxCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRIwEAYDVQQHDAlDdXBlcnRpbm8wHhcNMjMwMTA1MjEzMDIyWhcNMzMwMTAyMjEzMDIyWjA2MQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTESMBAGA1UEBwwJQ3VwZXJ0aW5vMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEc+/Bl+gospo6tf9Z7io5tdKdrlN1YdVnqEhEDXDShzdAJPQijamXIMHf8xWWTa1zgoYTxOKpbuJtDplz1XriTaMgMB4wDAYDVR0TBAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwCgYIKoZIzj0EAwMDRwAwRAIgemWQXnMAdTad2JDJWng9U4uBBL5mA7WI05H7oH7c6iQCIHiRqMjNfzUAyiu9h6rOU/K+iTR0I/3Y/NSWsXHX+acc";
+
     private const string BundleId = "com.example";
 
     [Fact]
@@ -45,7 +48,8 @@ public class SignedDataVerifierTest
         string testNotificationPayload =
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_TestNotification_Success.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
         ResponseBodyV2DecodedPayload result = await dataVerifier.VerifyAndDecodeNotification(testNotificationPayload);
 
         Assert.IsType<ResponseBodyV2DecodedPayload>(result);
@@ -63,10 +67,12 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync(
                 "./MockedSignedData/InputFor_VerifyAndDecode_AlgParameterIsUnsupported_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Equal("Unrecognized JWT algorithm attribute : HS256", exception.Message);
     }
@@ -81,10 +87,12 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync(
                 "./MockedSignedData/InputFor_VerifyAndDecode_JWSIsMissingAPart_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Equal("Payload does not have the correct format", exception.Message);
     }
@@ -99,10 +107,12 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync(
                 "./MockedSignedData/InputFor_VerifyAndDecode_Nox5cParameter_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Equal("x5c claim is null or has more or less than 3 certificates", exception.Message);
     }
@@ -117,10 +127,12 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync(
                 "./MockedSignedData/InputFor_VerifyAndDecode_ChainCertificateCompromised_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Contains("Payload signature could not be verified", exception.Message);
     }
@@ -134,10 +146,12 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync(
                 "./MockedSignedData/InputFor_VerifyAndDecode_InvalidSignature_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Contains("Payload signature could not be verified", exception.Message);
     }
@@ -156,9 +170,11 @@ public class SignedDataVerifierTest
         string didRenewNotificationPayload =
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_RenewalInfo_Success.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
-        JWSRenewalInfoDecodedPayload result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
+        JWSRenewalInfoDecodedPayload
+            result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
 
         Assert.Equal("Sandbox", result.Environment);
     }
@@ -177,9 +193,11 @@ public class SignedDataVerifierTest
         string didRenewNotificationPayload =
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_RenewalInfo_Success.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, BundleId, null);
 
-        JWSRenewalInfoDecodedPayload result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
+        JWSRenewalInfoDecodedPayload
+            result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
 
         Assert.Equal("Sandbox", result.Environment);
     }
@@ -192,10 +210,12 @@ public class SignedDataVerifierTest
         string testNotificationPayload =
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_WrongBundleId_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, AppStoreEnvironment.Sandbox, wrongBundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
+            AppStoreEnvironment.Sandbox, wrongBundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Contains("BundleId in payload does not match expected bundleId.", exception.Message);
     }
@@ -208,10 +228,12 @@ public class SignedDataVerifierTest
         string testNotificationPayload =
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_WrongEnvironment_Fails.txt");
 
-        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, wrongEnvironment, BundleId, null);
+        var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, wrongEnvironment,
+            BundleId, null);
 
         var exception =
-            await Assert.ThrowsAsync<VerificationException>(() => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
+            await Assert.ThrowsAsync<VerificationException>(() =>
+                dataVerifier.VerifyAndDecodeNotification(testNotificationPayload));
 
         Assert.Contains("Environment in payload does not match expected environment.", exception.Message);
     }

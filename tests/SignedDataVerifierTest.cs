@@ -49,7 +49,7 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_TestNotification_Success.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
         ResponseBodyV2DecodedPayload result = await dataVerifier.VerifyAndDecodeNotification(testNotificationPayload);
 
         Assert.IsType<ResponseBodyV2DecodedPayload>(result);
@@ -68,7 +68,7 @@ public class SignedDataVerifierTest
                 "./MockedSignedData/InputFor_VerifyAndDecode_AlgParameterIsUnsupported_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -88,7 +88,7 @@ public class SignedDataVerifierTest
                 "./MockedSignedData/InputFor_VerifyAndDecode_JWSIsMissingAPart_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -108,7 +108,7 @@ public class SignedDataVerifierTest
                 "./MockedSignedData/InputFor_VerifyAndDecode_Nox5cParameter_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -128,7 +128,7 @@ public class SignedDataVerifierTest
                 "./MockedSignedData/InputFor_VerifyAndDecode_ChainCertificateCompromised_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -147,7 +147,7 @@ public class SignedDataVerifierTest
                 "./MockedSignedData/InputFor_VerifyAndDecode_InvalidSignature_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -171,7 +171,7 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_RenewalInfo_Success.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         JWSRenewalInfoDecodedPayload
             result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
@@ -194,7 +194,7 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_RenewalInfo_Success.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, BundleId, null);
+            AppStoreEnvironment.Sandbox, BundleId);
 
         JWSRenewalInfoDecodedPayload
             result = await dataVerifier.VerifyAndDecodeRenewalInfo(didRenewNotificationPayload);
@@ -211,7 +211,7 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_WrongBundleId_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true,
-            AppStoreEnvironment.Sandbox, wrongBundleId, null);
+            AppStoreEnvironment.Sandbox, wrongBundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>
@@ -229,7 +229,7 @@ public class SignedDataVerifierTest
             await File.ReadAllTextAsync("./MockedSignedData/InputFor_VerifyAndDecode_WrongEnvironment_Fails.txt");
 
         var dataVerifier = new SignedDataVerifier(Convert.FromBase64String(RootCaBase64Encoded), true, wrongEnvironment,
-            BundleId, null);
+            BundleId);
 
         var exception =
             await Assert.ThrowsAsync<VerificationException>(() =>

@@ -8,7 +8,7 @@ using Mimo.AppStoreServerLibraryDotnet.Exceptions;
 
 namespace Mimo.AppStoreServerLibraryDotnet;
 
-public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineChecks, AppStoreEnvironment environment, string bundleId, int? appAppleId)
+public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineChecks, AppStoreEnvironment environment, string bundleId)
 {
     // It's recommended to reuse the JsonSerializerOptions instance.
     // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/configure-options?pivots=dotnet-8-0#reuse-jsonserializeroptions-instances

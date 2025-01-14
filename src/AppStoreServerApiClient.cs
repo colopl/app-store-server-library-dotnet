@@ -98,7 +98,7 @@ public class AppStoreServerApiClient(
     {
         string path = $"v1/transactions/consumption/{transactionId}";
 
-        return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Put, null, consumptionRequest, fetchResponse: false);
+        return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, fetchResponse: false);
     }
 
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
@@ -134,7 +134,7 @@ public class AppStoreServerApiClient(
         HttpMethod method,
         Dictionary<string, string>? queryParameters = null,
         object? body = null,
-        bool fetchResponse = true) where TReturn: class 
+        bool fetchResponse = true) where TReturn : class
     {
         string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
 

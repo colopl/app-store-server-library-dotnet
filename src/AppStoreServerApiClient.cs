@@ -19,26 +19,25 @@ namespace Mimo.AppStoreServerLibraryDotnet;
 /// <param name="environment">The environment to target</param>
 public class AppStoreServerApiClient(string signingKey, string keyId, string issuerId, string bundleId, AppStoreEnvironment environment)
 {
-
     /// <summary>
     /// Get the statuses for all of a customer’s auto-renewable subscriptions in your app.
     /// </summary>
     /// <param name="transactionId"> The identifier of a transaction that belongs to the customer, and which may be an original transaction identifier</param>
     /// <returns>The status for all the customer’s subscriptions, organized by their subscription group identifier.</returns>
-    public async Task<SubscriptionStatusResponse> GetAllSubscriptionStatuses(string transactionId)
+    public Task<SubscriptionStatusResponse> GetAllSubscriptionStatuses(string transactionId)
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses
 
         string path = $"v1/subscriptions/{transactionId}";
 
-        return (await MakeRequest<SubscriptionStatusResponse>(path, HttpMethod.Get))!;
+        return this.MakeRequest<SubscriptionStatusResponse>(path, HttpMethod.Get)!;
     }
 
     /// <summary>
     /// Get a list of notifications that the App Store server attempted to send to your server.
     /// </summary>
     /// <returns>A list of notifications and their attempts</returns>
-    public async Task<NotificationHistoryResponse?> GetNotificationHistory(NotificationHistoryRequest notificationHistoryRequest,
+    public Task<NotificationHistoryResponse?> GetNotificationHistory(NotificationHistoryRequest notificationHistoryRequest,
         string paginationToken = "")
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
@@ -50,7 +49,7 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
 
         string path = $"v1/notifications/history";
 
-        return await this.MakeRequest<NotificationHistoryResponse>(path, HttpMethod.Post, queryParameters, notificationHistoryRequest);
+        return this.MakeRequest<NotificationHistoryResponse>(path, HttpMethod.Post, queryParameters, notificationHistoryRequest);
     }
 
     /// <summary>
@@ -70,6 +69,22 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
         string path = $"v2/history/{transactionId}";
 
         return await this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Get, queryParameters);
+    }
+
+    /// <summary>
+    /// Send consumption information about a consumable in-app purchase to the App Store after your server receives a consumption request notification.
+    /// </summary>
+    /// <param name="transactionId">The transaction identifier for which you're providing consumption information. You receive this identifier in the CONSUMPTION_REQUEST notification the App Store sends to your server.</param>
+    /// <param name="consumptionRequest">The request body containing consumption information.</param>
+    /// <exception cref="ApiException">Thrown when a response indicates the request could not be processed</exception>
+    /// <remarks>
+    /// See <see href="https://developer.apple.com/documentation/appstoreserverapi/send_consumption_information">Send Consumption Information</see>
+    /// </remarks>
+    public Task SendConsumptionData(string transactionId, ConsumptionRequest consumptionRequest)
+    {
+        string path = $"v1/transactions/consumption/{transactionId}";
+
+        return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Put, null, consumptionRequest);
     }
 
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
@@ -115,7 +130,7 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
     {
         string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
 
-        string url = $"{environment.BaseUrl}/{path}";
+        Uri url = new (environment.BaseUrl, path);
 
         TReturn? response;
         try
@@ -147,6 +162,12 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
                     .PostJsonAsync(body)
                     .ReceiveJson<TReturn>();
             }
+            else if (method == HttpMethod.Put)
+            {
+                response = await request
+                    .PutJsonAsync(body)
+                    .ReceiveJson<TReturn>();
+            }
             else
             {
                 throw new NotSupportedException($"Method {method} not supported");
@@ -158,7 +179,7 @@ public class AppStoreServerApiClient(string signingKey, string keyId, string iss
 
             if (error != null)
             {
-                throw new AppStoreServerApiException($"Error when calling App Store Server API for endpoint {path}. Received error code: {error.ErrorCode}, Received error message: {error.ErrorMessage}",
+                throw new ApiException($"Error when calling App Store Server API for endpoint {path}. Received error code: {error.ErrorCode}, Received error message: {error.ErrorMessage}",
                     error);
             }
 

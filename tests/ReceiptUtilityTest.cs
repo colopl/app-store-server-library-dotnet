@@ -1,13 +1,16 @@
 using Mimo.AppStoreServerLibraryDotnet;
+using Xunit;
 
 namespace Mimo.AppStoreServerLibraryDotnetTests;
 
 public class ReceiptUtilityTest
 {
-     [Fact]
+    [Fact]
     public void ExtractTransactionIdFromAppReceipt_WhenCalledWithValidAppReceipt_ReturnsTransactionId_0()
     {
-        string appReceipt = File.ReadAllText("./MockReceipts/InputFor_ExtractTransactionIdFromAppReceipt_WhenCalledWithValidAppReceipt_ReturnsTransactionId_0.txt");
+        string appReceipt =
+            File.ReadAllText(
+                "./MockReceipts/InputFor_ExtractTransactionIdFromAppReceipt_WhenCalledWithValidAppReceipt_ReturnsTransactionId_0.txt");
 
         ReceiptUtility utility = new();
 
@@ -20,7 +23,9 @@ public class ReceiptUtilityTest
     public void ExtractTransactionIdFromAppReceipt_WhitNoTransactions_ThrowsError()
     {
         //A receipt with an empty In-App Purchase array
-        string appReceipt = File.ReadAllText("./MockReceipts/InputFor_ExtractTransactionIdFromAppReceipt_WhitNoTransactions_ReturnsEmptyString.txt");
+        string appReceipt =
+            File.ReadAllText(
+                "./MockReceipts/InputFor_ExtractTransactionIdFromAppReceipt_WhitNoTransactions_ReturnsEmptyString.txt");
 
         ReceiptUtility utility = new();
 

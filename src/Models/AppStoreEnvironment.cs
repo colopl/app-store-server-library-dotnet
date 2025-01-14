@@ -2,16 +2,16 @@ namespace Mimo.AppStoreServerLibraryDotnet.Models;
 
 public record AppStoreEnvironment
 {
-    public static readonly AppStoreEnvironment Sandbox = new("Sandbox", "https://api.storekit-sandbox.itunes.apple.com/inApps");
+    public static readonly AppStoreEnvironment Sandbox = new("Sandbox", new Uri("https://api.storekit-sandbox.itunes.apple.com/inApps"));
 
-    public static readonly AppStoreEnvironment Production = new("Production", "https://api.storekit.itunes.apple.com/inApps");
+    public static readonly AppStoreEnvironment Production = new("Production", new Uri("https://api.storekit.itunes.apple.com/inApps"));
 
     /// <summary>
     /// Environment used for local unit testing.
     /// </summary>
-    public static readonly AppStoreEnvironment LocalTesting = new("LocalTesting", "https://local-testing-base-url");
+    public static readonly AppStoreEnvironment LocalTesting = new("LocalTesting", new Uri("https://local-testing-base-url"));
 
-    private AppStoreEnvironment(string name, string baseUrl)
+    private AppStoreEnvironment(string name, Uri baseUrl)
     {
         this.Name = name;
         this.BaseUrl = baseUrl;
@@ -19,5 +19,5 @@ public record AppStoreEnvironment
 
     public string Name { get; }
 
-    public string BaseUrl { get; }
+    public Uri BaseUrl { get; }
 }

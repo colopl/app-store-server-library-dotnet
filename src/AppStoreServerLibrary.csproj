@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://github.com/getmimo/app-store-server-library-dotnet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/getmimo/app-store-server-library-dotnet</RepositoryUrl>
     <PackageTags>Apple, StoreKit 2, App Store Server Notifications, App Store Server API, App Store Server Library, AppStore</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AssemblyName>Mimo.AppStoreServerLibrary</AssemblyName>
     <RootNamespace>Mimo.AppStoreServerLibrary</RootNamespace>

@@ -1,9 +1,9 @@
-using Mimo.AppStoreServerLibraryDotnet;
+using Mimo.AppStoreServerLibrary;
 using Xunit;
 using RichardSzalay.MockHttp;
-using Mimo.AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibrary.Models;
 
-namespace Mimo.AppStoreServerLibraryDotnetTests;
+namespace Mimo.AppStoreServerLibraryTests;
 
 public class AppStoreServerApiClientTest
 {

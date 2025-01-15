@@ -1,7 +1,7 @@
 using System.Formats.Asn1;
 using System.Numerics;
 
-namespace Mimo.AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibrary;
 
 public class ReceiptUtility
 {
@@ -27,14 +27,14 @@ public class ReceiptUtility
         AsnReader reader = new(decodedReceipts, AsnEncodingRules.BER);
 
         Asn1Tag tag = reader.PeekTag();
-        if (tag.TagClass != TagClass.Universal || tag.TagValue != (int) UniversalTagNumber.Sequence)
+        if (tag.TagClass != TagClass.Universal || tag.TagValue != (int)UniversalTagNumber.Sequence)
         {
             throw new FormatException("Expected ASN.1 Sequence.");
         }
 
         AsnReader sequence = reader.ReadSequence();
         tag = sequence.PeekTag();
-        if (tag.TagClass != TagClass.Universal || tag.TagValue != (int) UniversalTagNumber.ObjectIdentifier ||
+        if (tag.TagClass != TagClass.Universal || tag.TagValue != (int)UniversalTagNumber.ObjectIdentifier ||
             sequence.ReadObjectIdentifier() != "1.2.840.113549.1.7.2")
         {
             throw new FormatException("Expected PKCS#7 Object.");
@@ -63,7 +63,7 @@ public class ReceiptUtility
 
         AsnReader outerReceiptReader = new(outerReceiptOctetString, AsnEncodingRules.BER);
 
-        if(!outerReceiptReader.HasData)
+        if (!outerReceiptReader.HasData)
         {
             throw new FormatException("Outer receipt sequence is empty.");
         }
@@ -107,7 +107,7 @@ public class ReceiptUtility
 
         AsnReader inAppPurchasesReader = new(inAppPurchasesBytes, AsnEncodingRules.BER);
 
-        if(!inAppPurchasesReader.HasData)
+        if (!inAppPurchasesReader.HasData)
         {
             throw new FormatException("In App Purchase sequence is empty.");
         }

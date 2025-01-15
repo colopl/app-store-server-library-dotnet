@@ -4,12 +4,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Web;
-using Mimo.AppStoreServerLibraryDotnet.Exceptions;
-using Mimo.AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibrary.Exceptions;
+using Mimo.AppStoreServerLibrary.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Mimo.AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibrary;
 
 /// <summary>
 /// Create an App Store Server API client

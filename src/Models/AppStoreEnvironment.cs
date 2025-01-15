@@ -1,4 +1,4 @@
-namespace Mimo.AppStoreServerLibraryDotnet.Models;
+namespace Mimo.AppStoreServerLibrary.Models;
 
 public record AppStoreEnvironment
 {

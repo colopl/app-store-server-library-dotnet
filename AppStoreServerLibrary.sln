@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnet", "src\AppStoreServerLibraryDotnet.csproj", "{07591682-FEF0-4441-A504-C479651AA37A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibrary", "src\AppStoreServerLibrary.csproj", "{07591682-FEF0-4441-A504-C479651AA37A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryDotnetTests", "tests\AppStoreServerLibraryDotnetTests.csproj", "{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppStoreServerLibraryTests", "tests\AppStoreServerLibraryTests.csproj", "{3640D40C-C3F9-46C3-B39F-C903BDEDEB80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,9 +1,9 @@
-using Mimo.AppStoreServerLibraryDotnet;
-using Mimo.AppStoreServerLibraryDotnet.Exceptions;
-using Mimo.AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibrary;
+using Mimo.AppStoreServerLibrary.Exceptions;
+using Mimo.AppStoreServerLibrary.Models;
 using Xunit;
 
-namespace Mimo.AppStoreServerLibraryDotnetTests;
+namespace Mimo.AppStoreServerLibraryTests;
 
 /// <summary>
 /// In this test class the input Data was generated in two ways :

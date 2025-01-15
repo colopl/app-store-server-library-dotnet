@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Mimo.AppStoreServerLibraryDotnet.Models;
+namespace Mimo.AppStoreServerLibrary.Models;
 
 /// <summary>
 /// Response for a consumption request notification, used by Apple to determine whether to grant the user the refund or decline it.

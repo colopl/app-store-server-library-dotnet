@@ -1,7 +1,7 @@
 using System.Net;
-using Mimo.AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibrary.Models;
 
-namespace Mimo.AppStoreServerLibraryDotnet.Exceptions;
+namespace Mimo.AppStoreServerLibrary.Exceptions;
 
 public class ApiException(HttpStatusCode? httpStatusCode, ErrorResponse? errorResponse = null, Exception? innerException = null) : Exception(errorResponse?.ErrorMessage, innerException)
 {

@@ -8,8 +8,8 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Company>Mimo</Company>
-    <AssemblyName>Mimo.AppStoreServerLibraryDotnetTests</AssemblyName>
-    <RootNamespace>Mimo.AppStoreServerLibraryDotnetTests</RootNamespace>
+    <AssemblyName>Mimo.AppStoreServerLibraryTests</AssemblyName>
+    <RootNamespace>Mimo.AppStoreServerLibraryTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\AppStoreServerLibraryDotnet.csproj" />
+    <ProjectReference Include="..\src\AppStoreServerLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

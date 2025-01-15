@@ -5,9 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Company>Mimo</Company>
-    <PackageId>Mimo.AppStoreServerLibraryDotnet</PackageId>
+    <PackageId>Mimo.AppStoreServerLibrary</PackageId>
+    <Version>0.0.1</Version>
     <Authors>Mimo</Authors>
-    <Title>Mimo.AppStoreServerLibraryDotnet</Title>
+    <Title>Mimo.AppStoreServerLibrary</Title>
     <Description>An unofficial .NET SDK for App Store Server Notifications and API</Description>
     <Copyright>Copyright © Mimo GmbH 2024</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,8 +17,8 @@
     <PackageTags>Apple, StoreKit 2, App Store Server Notifications, App Store Server API, App Store Server Library, AppStore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <AssemblyName>Mimo.AppStoreServerLibraryDotnet</AssemblyName>
-    <RootNamespace>Mimo.AppStoreServerLibraryDotnet</RootNamespace>
+    <AssemblyName>Mimo.AppStoreServerLibrary</AssemblyName>
+    <RootNamespace>Mimo.AppStoreServerLibrary</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

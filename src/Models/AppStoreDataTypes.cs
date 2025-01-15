@@ -1,4 +1,4 @@
-namespace Mimo.AppStoreServerLibraryDotnet.Models;
+namespace Mimo.AppStoreServerLibrary.Models;
 
 /// <summary>
 /// The response body the App Store sends in a version 2 server notification.

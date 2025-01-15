@@ -1,12 +1,12 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
-using Mimo.AppStoreServerLibraryDotnet.Models;
+using Mimo.AppStoreServerLibrary.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Mimo.AppStoreServerLibraryDotnet.Exceptions;
+using Mimo.AppStoreServerLibrary.Exceptions;
 
-namespace Mimo.AppStoreServerLibraryDotnet;
+namespace Mimo.AppStoreServerLibrary;
 
 public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineChecks, AppStoreEnvironment environment, string bundleId)
 {

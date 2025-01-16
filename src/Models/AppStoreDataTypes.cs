@@ -487,9 +487,8 @@ public enum TransactionsItemSubscriptionStatus
     /// <summary>
     /// The auto-renewable subscription is revoked.
     /// </summary>
-    Revoked = 5
+    Revoked = 5,
 }
-
 
 /// <summary>
 /// The request body for notification history.
@@ -603,7 +602,6 @@ public class TransactionHistoryResponse
     public string Revision { get; set; } = null!;
     public List<string> SignedTransactions { get; set; } = null!;
 }
-
 
 /// <summary>
 /// Error response from the App Store Server API.

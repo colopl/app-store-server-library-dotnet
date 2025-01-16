@@ -3,7 +3,11 @@ using Mimo.AppStoreServerLibrary.Models;
 
 namespace Mimo.AppStoreServerLibrary.Exceptions;
 
-public class ApiException(HttpStatusCode? httpStatusCode, ErrorResponse? errorResponse = null, Exception? innerException = null) : Exception(errorResponse?.ErrorMessage, innerException)
+public class ApiException(
+    HttpStatusCode? httpStatusCode,
+    ErrorResponse? errorResponse = null,
+    Exception? innerException = null
+) : Exception(errorResponse?.ErrorMessage, innerException)
 {
     public HttpStatusCode? HttpStatusCode { get; } = httpStatusCode;
 
@@ -13,6 +17,7 @@ public class ApiException(HttpStatusCode? httpStatusCode, ErrorResponse? errorRe
 
     public override string ToString()
     {
-        return base.ToString() + $" HttpStatusCode: {this.HttpStatusCode}, ApiErrorCode: {this.ApiErrorCode}, ApiErrorMessage: {this.ApiErrorMessage}";
+        return base.ToString()
+            + $" HttpStatusCode: {this.HttpStatusCode}, ApiErrorCode: {this.ApiErrorCode}, ApiErrorMessage: {this.ApiErrorMessage}";
     }
 }

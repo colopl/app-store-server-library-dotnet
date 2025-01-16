@@ -34,8 +34,11 @@ public class ReceiptUtility
 
         AsnReader sequence = reader.ReadSequence();
         tag = sequence.PeekTag();
-        if (tag.TagClass != TagClass.Universal || tag.TagValue != (int)UniversalTagNumber.ObjectIdentifier ||
-            sequence.ReadObjectIdentifier() != "1.2.840.113549.1.7.2")
+        if (
+            tag.TagClass != TagClass.Universal
+            || tag.TagValue != (int)UniversalTagNumber.ObjectIdentifier
+            || sequence.ReadObjectIdentifier() != "1.2.840.113549.1.7.2"
+        )
         {
             throw new FormatException("Expected PKCS#7 Object.");
         }
@@ -129,7 +132,6 @@ public class ReceiptUtility
             BigInteger typeId = inAppPurchasesSequence.ReadInteger();
             inAppPurchasesSequence.ReadInteger();
             byte[] contentString = inAppPurchasesSequence.ReadOctetString();
-
 
             if (typeId == TRANSACTION_IDENTIFIER_TYPE_ID)
             {

@@ -4,10 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Web;
-using Mimo.AppStoreServerLibrary.Exceptions;
-using Mimo.AppStoreServerLibrary.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Mimo.AppStoreServerLibrary.Exceptions;
+using Mimo.AppStoreServerLibrary.Models;
 
 namespace Mimo.AppStoreServerLibrary;
 
@@ -26,7 +26,8 @@ public class AppStoreServerApiClient(
     string issuerId,
     string bundleId,
     AppStoreEnvironment environment,
-    HttpClient? httpClient = null)
+    HttpClient? httpClient = null
+)
 {
     private readonly HttpClient httpClient = httpClient ?? new HttpClient();
 
@@ -50,7 +51,8 @@ public class AppStoreServerApiClient(
     /// <returns>A list of notifications and their attempts</returns>
     public Task<NotificationHistoryResponse?> GetNotificationHistory(
         NotificationHistoryRequest notificationHistoryRequest,
-        string paginationToken = "")
+        string paginationToken = ""
+    )
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
         Dictionary<string, string> queryParameters = new();
@@ -61,17 +63,19 @@ public class AppStoreServerApiClient(
 
         string path = $"v1/notifications/history";
 
-        return this.MakeRequest<NotificationHistoryResponse>(path, HttpMethod.Post, queryParameters,
-            notificationHistoryRequest);
+        return this.MakeRequest<NotificationHistoryResponse>(
+            path,
+            HttpMethod.Post,
+            queryParameters,
+            notificationHistoryRequest
+        );
     }
 
     /// <summary>
     /// Get a customer’s in-app purchase transaction history for your app.
     /// </summary>
     /// <returns>A list of transactions associated with the provided Transaction Id</returns>
-    public Task<TransactionHistoryResponse?> GetTransactionHistory(
-        string transactionId,
-        string revisionToken = "")
+    public Task<TransactionHistoryResponse?> GetTransactionHistory(string transactionId, string revisionToken = "")
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
         Dictionary<string, string> queryParameters = new();
@@ -114,15 +118,12 @@ public class AppStoreServerApiClient(
             {
                 { "iss", issuerId },
                 { "aud", "appstoreconnect-v1" },
-                { "bid", bundleId }
+                { "bid", bundleId },
             },
-            TokenType = "JWT"
+            TokenType = "JWT",
         };
 
-        var securityKey = new ECDsaSecurityKey(prvKey)
-        {
-            KeyId = keyId
-        };
+        var securityKey = new ECDsaSecurityKey(prvKey) { KeyId = keyId };
 
         securityDescriptor.SigningCredentials = new SigningCredentials(securityKey, "ES256");
 
@@ -134,7 +135,9 @@ public class AppStoreServerApiClient(
         HttpMethod method,
         Dictionary<string, string>? queryParameters = null,
         object? body = null,
-        bool fetchResponse = true) where TReturn : class
+        bool fetchResponse = true
+    )
+        where TReturn : class
     {
         string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
 
@@ -153,10 +156,7 @@ public class AppStoreServerApiClient(
             builder.Query = query.ToString();
         }
 
-        var jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         try
         {
@@ -168,23 +168,28 @@ public class AppStoreServerApiClient(
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 httpResponse = await this.httpClient.SendAsync(request);
             }
-
             else if (method == HttpMethod.Post)
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, builder.Uri);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                request.Content = new StringContent(JsonSerializer.Serialize(body, jsonOptions), Encoding.UTF8, "application/json");
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(body, jsonOptions),
+                    Encoding.UTF8,
+                    "application/json"
+                );
                 httpResponse = await this.httpClient.SendAsync(request);
             }
-
             else if (method == HttpMethod.Put)
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, builder.Uri);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                request.Content = new StringContent(JsonSerializer.Serialize(body, jsonOptions), Encoding.UTF8, "application/json");
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(body, jsonOptions),
+                    Encoding.UTF8,
+                    "application/json"
+                );
                 httpResponse = await this.httpClient.SendAsync(request);
             }
-
             else
             {
                 throw new NotSupportedException($"Method {method} not supported");
@@ -200,9 +205,7 @@ public class AppStoreServerApiClient(
             var error = JsonSerializer.Deserialize<ErrorResponse>(responseContent, jsonOptions);
 
             throw new ApiException(httpResponse.StatusCode, error);
-
         }
-
         catch (HttpRequestException ex)
         {
             throw new ApiException(ex.StatusCode, null, ex);

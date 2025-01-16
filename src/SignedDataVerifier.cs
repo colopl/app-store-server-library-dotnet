@@ -1,20 +1,25 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
-using Mimo.AppStoreServerLibrary.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Mimo.AppStoreServerLibrary.Exceptions;
+using Mimo.AppStoreServerLibrary.Models;
 
 namespace Mimo.AppStoreServerLibrary;
 
-public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineChecks, AppStoreEnvironment environment, string bundleId)
+public class SignedDataVerifier(
+    byte[] appleRootCertificates,
+    bool enableOnlineChecks,
+    AppStoreEnvironment environment,
+    string bundleId
+)
 {
     // It's recommended to reuse the JsonSerializerOptions instance.
     // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/configure-options?pivots=dotnet-8-0#reuse-jsonserializeroptions-instances
     private readonly JsonSerializerOptions jsonSerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
     /// <summary>
@@ -34,7 +39,6 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
         {
             decodedPayload = JsonSerializer.Deserialize<ResponseBodyV2DecodedPayload>(payload, jsonSerializerOptions)!;
         }
-
         catch
         {
             throw new VerificationException($"Error deserializing notification payload. Payload : {payload}");
@@ -42,12 +46,16 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
 
         if (decodedPayload.Data.Environment != environment.Name)
         {
-            throw new VerificationException($"Environment in payload does not match expected environment. Expected : {environment}, Actual : {decodedPayload.Data.Environment}");
+            throw new VerificationException(
+                $"Environment in payload does not match expected environment. Expected : {environment}, Actual : {decodedPayload.Data.Environment}"
+            );
         }
 
         if (decodedPayload.Data.BundleId != bundleId)
         {
-            throw new VerificationException($"BundleId in payload does not match expected bundleId. Expected : {bundleId}, Actual : {decodedPayload.Data.BundleId}");
+            throw new VerificationException(
+                $"BundleId in payload does not match expected bundleId. Expected : {bundleId}, Actual : {decodedPayload.Data.BundleId}"
+            );
         }
 
         return decodedPayload;
@@ -68,7 +76,6 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
         {
             return JsonSerializer.Deserialize<JwsTransactionDecodedPayload>(payload, jsonSerializerOptions)!;
         }
-
         catch
         {
             throw new VerificationException($"Error deserializing transaction payload. Payload : {payload}");
@@ -90,7 +97,6 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
         {
             return JsonSerializer.Deserialize<JWSRenewalInfoDecodedPayload>(payload, jsonSerializerOptions)!;
         }
-
         catch
         {
             throw new VerificationException($"Error deserializing renewal info payload. Payload : {payload}");
@@ -166,10 +172,13 @@ public class SignedDataVerifier(byte[] appleRootCertificates, bool enableOnlineC
             ValidateIssuer = false,
             ValidateAudience = false,
             //Notifications don't have an expiration date
-            ValidateLifetime = false
+            ValidateLifetime = false,
         };
 
-        TokenValidationResult? result = await securityTokenHandler.ValidateTokenAsync(signedPayload, validationParameters);
+        TokenValidationResult? result = await securityTokenHandler.ValidateTokenAsync(
+            signedPayload,
+            validationParameters
+        );
 
         if (!result.IsValid)
         {

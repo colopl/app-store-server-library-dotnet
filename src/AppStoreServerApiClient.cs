@@ -29,7 +29,8 @@ public class AppStoreServerApiClient(
     HttpClient? httpClient = null
 )
 {
-    private readonly HttpClient httpClient = httpClient ?? new HttpClient();
+    private static readonly Lazy<HttpClient> DefaultHttpClient = new(() => new HttpClient());
+    private readonly HttpClient httpClient = httpClient ?? DefaultHttpClient.Value;
 
     /// <summary>
     /// Get the statuses for all of a customer’s auto-renewable subscriptions in your app.
@@ -75,7 +76,10 @@ public class AppStoreServerApiClient(
     /// Get a customer’s in-app purchase transaction history for your app.
     /// </summary>
     /// <returns>A list of transactions associated with the provided Transaction Id</returns>
-    public Task<TransactionHistoryResponse?> GetTransactionHistory(string transactionId, string revisionToken = "")
+    public Task<TransactionHistoryResponse?> GetTransactionHistory(
+        string transactionId,
+        string revisionToken = ""
+    )
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
         Dictionary<string, string> queryParameters = new();
@@ -102,10 +106,21 @@ public class AppStoreServerApiClient(
     {
         string path = $"v1/transactions/consumption/{transactionId}";
 
-        return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, fetchResponse: false);
+        return this.MakeRequest<object?>(
+            path,
+            HttpMethod.Put,
+            null,
+            consumptionRequest,
+            fetchResponse: false
+        );
     }
 
-    private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
+    private static string CreateBearerToken(
+        string keyId,
+        string issuerId,
+        string signingKey,
+        string bundleId
+    )
     {
         var prvKey = ECDsa.Create();
         prvKey.ImportFromPem(signingKey);
@@ -156,7 +171,10 @@ public class AppStoreServerApiClient(
             builder.Query = query.ToString();
         }
 
-        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
 
         try
         {
@@ -199,7 +217,9 @@ public class AppStoreServerApiClient(
 
             if (httpResponse.IsSuccessStatusCode)
             {
-                return fetchResponse ? JsonSerializer.Deserialize<TReturn>(responseContent, jsonOptions) : null;
+                return fetchResponse
+                    ? JsonSerializer.Deserialize<TReturn>(responseContent, jsonOptions)
+                    : null;
             }
 
             var error = JsonSerializer.Deserialize<ErrorResponse>(responseContent, jsonOptions);

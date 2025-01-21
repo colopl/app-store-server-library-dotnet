@@ -33,15 +33,51 @@ public class AppStoreServerApiClientTest
     [Fact]
     public async Task GetAllSubscriptionStatuses_Success()
     {
+        const string responseData = """
+            {
+              "environment" : "Sandbox",
+              "bundleId" : "com.test.app",
+              "appAppleId" : 1234567890,
+              "data" : [ {
+                "subscriptionGroupIdentifier" : "98765",
+                "lastTransactions" : [ {
+                  "originalTransactionId" : "123454321",
+                  "status" : 2,
+                  "signedTransactionInfo" : "eyabc",
+                  "signedRenewalInfo" : "eyxyz"
+                } ]
+              } ]
+            }
+            """;
         var mockHttp = new MockHttpMessageHandler();
         mockHttp
-            .When($"{AppStoreEnvironment.LocalTesting.BaseUrl}v1/subscriptions/123456")
-            .Respond("application/json", "{\"data\":[]}");
+            .When("https://local-testing-base-url/inApps/v1/subscriptions/123456")
+            .Respond("application/json", responseData);
 
         AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);
         SubscriptionStatusResponse response = await client.GetAllSubscriptionStatuses("123456");
 
         Assert.NotNull(response);
+        Assert.Equal("Sandbox", response.Environment);
+        Assert.Equal("com.test.app", response.BundleId);
+        Assert.Equal(1234567890, response.AppAppleId);
+        Assert.Collection(
+            response.Data,
+            data =>
+            {
+                Assert.Equal("98765", data.SubscriptionGroupIdentifier);
+                Assert.Collection(
+                    data.LastTransactions,
+                    transaction =>
+                    {
+                        Assert.Equal("123454321", transaction.OriginalTransactionId);
+                        Assert.Equal(TransactionsItemSubscriptionStatus.Expired, transaction.Status);
+                        Assert.Equal("eyabc", transaction.SignedTransactionInfo);
+                        Assert.Equal("eyxyz", transaction.SignedRenewalInfo);
+                    }
+                );
+            }
+        );
     }
 
     [Fact]
@@ -49,7 +85,7 @@ public class AppStoreServerApiClientTest
     {
         var mockHttp = new MockHttpMessageHandler();
         mockHttp
-            .When($"{AppStoreEnvironment.LocalTesting.BaseUrl}v1/notifications/history")
+            .When($"https://local-testing-base-url/inApps/v1/notifications/history")
             .Respond("application/json", "{\"notificationHistory\":[]}");
 
         AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);
@@ -63,7 +99,7 @@ public class AppStoreServerApiClientTest
     {
         var mockHttp = new MockHttpMessageHandler();
         mockHttp
-            .When($"{AppStoreEnvironment.LocalTesting.BaseUrl}v2/history/123456")
+            .When($"https://local-testing-base-url/inApps/v2/history/123456")
             .Respond("application/json", "{\"signedTransactions\":[]}");
 
         AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);
@@ -77,7 +113,7 @@ public class AppStoreServerApiClientTest
     {
         var mockHttp = new MockHttpMessageHandler();
         mockHttp
-            .When($"{AppStoreEnvironment.LocalTesting.BaseUrl}v1/transactions/consumption/123456")
+            .When($"https://local-testing-base-url/inApps/v1/transactions/consumption/123456")
             .Respond(System.Net.HttpStatusCode.OK);
 
         AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);

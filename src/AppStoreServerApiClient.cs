@@ -41,7 +41,7 @@ public class AppStoreServerApiClient(
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses
 
-        string path = $"v1/subscriptions/{transactionId}";
+        string path = $"/inApps/v1/subscriptions/{transactionId}";
 
         return this.MakeRequest<SubscriptionStatusResponse>(path, HttpMethod.Get)!;
     }
@@ -62,7 +62,7 @@ public class AppStoreServerApiClient(
             queryParameters.Add("paginationToken", paginationToken);
         }
 
-        string path = $"v1/notifications/history";
+        const string path = "/inApps/v1/notifications/history";
 
         return this.MakeRequest<NotificationHistoryResponse>(
             path,
@@ -75,7 +75,7 @@ public class AppStoreServerApiClient(
     /// <summary>
     /// Get a customer’s in-app purchase transaction history for your app.
     /// </summary>
-    /// <returns>A list of transactions associated with the provided Transaction Id</returns>
+    /// <returns>A list of transactions associated with the provided Transaction ID</returns>
     public Task<TransactionHistoryResponse?> GetTransactionHistory(string transactionId, string revisionToken = "")
     {
         //Call to https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
@@ -85,7 +85,7 @@ public class AppStoreServerApiClient(
             queryParameters.Add("revision", revisionToken);
         }
 
-        string path = $"v2/history/{transactionId}";
+        string path = $"/inApps/v2/history/{transactionId}";
 
         return this.MakeRequest<TransactionHistoryResponse>(path, HttpMethod.Get, queryParameters);
     }
@@ -101,9 +101,9 @@ public class AppStoreServerApiClient(
     /// </remarks>
     public Task SendConsumptionData(string transactionId, ConsumptionRequest consumptionRequest)
     {
-        string path = $"v1/transactions/consumption/{transactionId}";
+        string path = $"/inApps/v1/transactions/consumption/{transactionId}";
 
-        return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, fetchResponse: false);
+        return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, false);
     }
 
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
@@ -142,9 +142,8 @@ public class AppStoreServerApiClient(
     {
         string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
 
-        Uri url = new(environment.BaseUrl, path);
+        UriBuilder builder = new(environment.BaseUrl) { Path = path };
 
-        var builder = new UriBuilder(url);
         if (queryParameters != null && queryParameters.Any())
         {
             NameValueCollection query = HttpUtility.ParseQueryString(builder.Query);

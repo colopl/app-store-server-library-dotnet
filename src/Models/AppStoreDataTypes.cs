@@ -400,7 +400,7 @@ public class SubscriptionStatusResponse
     /// <summary>
     /// The unique identifier of the app that the notification applies to.
     /// </summary>
-    public string? AppAppleId { get; set; }
+    public long AppAppleId { get; set; }
 
     /// <summary>
     /// The bundle identifier of the app.

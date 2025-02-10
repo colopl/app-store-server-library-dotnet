@@ -604,6 +604,14 @@ public class TransactionHistoryResponse
 }
 
 /// <summary>
+/// A response that contains the customer’s transaction information for an app.
+/// </summary>
+public class TransactionInfoResponse
+{
+    public string SignedTransactionInfo { get; set; } = null!;
+}
+
+/// <summary>
 /// Error response from the App Store Server API.
 /// </summary>
 public class ErrorResponse

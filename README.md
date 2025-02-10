@@ -23,7 +23,7 @@ This is a list of the features that are currently implemented in the library, co
 | Get Transaction History v2                                  |  ✅   |      ✅      |
 | Extract Transaction Id from receipt                         |  ✅   |      ✅      |
 | Get Transaction History v1                                  |  ✅   |              |
-| Get Transaction Info                                        |  ✅   |              |
+| Get Transaction Info                                        |  ✅   |      ✅      |
 | Send Consumption Information                                |  ✅   |      ✅      |
 | Look Up Order ID                                            |  ✅   |              |
 | Get Refund History                                          |  ✅   |              |
@@ -65,7 +65,7 @@ try {
 
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > The `SignedDataVerifier` will not verify the payload if the `environment` parameter is `LocalTesting`. This was done to allow testing fake payloads locally without the need to verify them.
 
 ### API

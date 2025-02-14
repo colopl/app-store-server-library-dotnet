@@ -106,6 +106,14 @@ public class AppStoreServerApiClient(
         return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, false);
     }
 
+    public Task<TransactionInfoResponse?> GetTransactionInfo(string transactionId)
+    {
+        //Call to https://developer.apple.com/documentation/appstoreserverapi/get-v1-transactions-_transactionid_
+        string path = $"/inApps/v1/transactions/{transactionId}";
+
+        return this.MakeRequest<TransactionInfoResponse>(path, HttpMethod.Get);
+    }
+
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
     {
         var prvKey = ECDsa.Create();

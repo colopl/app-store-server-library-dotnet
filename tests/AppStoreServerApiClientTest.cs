@@ -136,4 +136,19 @@ public class AppStoreServerApiClientTest
             }
         );
     }
+
+    [Fact]
+    public async Task GetTransactionInfo_Success()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp
+            .When($"https://local-testing-base-url/inApps/v1/transactions/1234")
+            .Respond("application/json", "{\"signedTransactionInfo\":\"signed_transaction_info_value\"}");
+
+        AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);
+
+        TransactionInfoResponse? response = await client.GetTransactionInfo("1234");
+        Assert.NotNull(response);
+        Assert.Equal("signed_transaction_info_value", response.SignedTransactionInfo);
+    }
 }

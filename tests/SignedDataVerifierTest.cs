@@ -232,7 +232,7 @@ public class SignedDataVerifierTest
             BundleId
         );
 
-        JWSRenewalInfoDecodedPayload result = await dataVerifier.VerifyAndDecodeRenewalInfo(
+        JwsTransactionDecodedPayload result = await dataVerifier.VerifyAndDecodeTransaction(
             didRenewNotificationPayload
         );
 

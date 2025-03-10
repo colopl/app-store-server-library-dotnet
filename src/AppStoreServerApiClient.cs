@@ -114,6 +114,14 @@ public class AppStoreServerApiClient(
         return this.MakeRequest<TransactionInfoResponse>(path, HttpMethod.Get);
     }
 
+    public Task<OrderLookupResponse> LookUpOrderId(string orderId)
+    {
+        //Call to https://developer.apple.com/documentation/appstoreserverapi/look_up_order_id
+        string path = $"/inApps/v1/lookup/{orderId}";
+
+        return this.MakeRequest<OrderLookupResponse>(path, HttpMethod.Get)!;
+    }
+
     private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
     {
         var prvKey = ECDsa.Create();

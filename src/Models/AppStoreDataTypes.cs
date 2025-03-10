@@ -612,6 +612,31 @@ public class TransactionInfoResponse
 }
 
 /// <summary>
+/// A response that includes the order lookup status and an array of signed transactions for the in-app purchases in the order.
+/// </summary>
+public class OrderLookupResponse
+{
+    public OrderLookupStatus Status { get; set; }
+    public List<string> SignedTransactions { get; set; } = null!;
+}
+
+/// <summary>
+/// A value that indicates whether the order ID in the request is valid for your app.
+/// </summary>
+public enum OrderLookupStatus
+{
+    /// <summary>
+    /// Valid
+    /// </summary>
+    Valid = 0,
+
+    /// <summary>
+    /// Invalid
+    /// </summary>
+    Invalid = 1,
+}
+
+/// <summary>
 /// Error response from the App Store Server API.
 /// </summary>
 public class ErrorResponse

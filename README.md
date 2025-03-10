@@ -25,7 +25,7 @@ This is a list of the features that are currently implemented in the library, co
 | Get Transaction History v1                                  |  ✅   |              |
 | Get Transaction Info                                        |  ✅   |      ✅      |
 | Send Consumption Information                                |  ✅   |      ✅      |
-| Look Up Order ID                                            |  ✅   |              |
+| Look Up Order ID                                            |  ✅   |      ✅      |
 | Get Refund History                                          |  ✅   |              |
 | Extending the renewal date for auto-renewable subscriptions |  ✅   |              |
 | Request a Test Notification                                 |  ✅   |              |

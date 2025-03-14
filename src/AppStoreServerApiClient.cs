@@ -106,23 +106,40 @@ public class AppStoreServerApiClient(
         return this.MakeRequest<object?>(path, HttpMethod.Put, null, consumptionRequest, false);
     }
 
+    /// <summary>
+    /// Get information about a single transaction for your app.
+    /// </summary>
+    /// <param name="transactionId">The identifier of a transaction that belongs to the customer, and which may be an original transaction identifier.</param>
+    /// <exception cref="ApiException">Thrown when a response indicates the request could not be processed</exception>
+    /// <remarks>
+    /// See <see href="https://developer.apple.com/documentation/appstoreserverapi/get-v1-transactions-_transactionid_">Get Transaction Info</see>
+    /// </remarks>
     public Task<TransactionInfoResponse?> GetTransactionInfo(string transactionId)
     {
-        //Call to https://developer.apple.com/documentation/appstoreserverapi/get-v1-transactions-_transactionid_
         string path = $"/inApps/v1/transactions/{transactionId}";
 
         return this.MakeRequest<TransactionInfoResponse>(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// Get a customer’s in-app purchases from a receipt using the order ID.
+    /// </summary>
+    /// <param name="orderId">The order ID for in-app purchases that belong to the customer.</param>
+    /// <exception cref="ApiException">Thrown when a response indicates the request could not be processed</exception>
+    /// <remarks>
+    /// See <see href="https://developer.apple.com/documentation/appstoreserverapi/get-v1-lookup-_orderid_">Look Up Order ID</see>
+    /// </remarks>
     public Task<OrderLookupResponse> LookUpOrderId(string orderId)
     {
-        //Call to https://developer.apple.com/documentation/appstoreserverapi/look_up_order_id
         string path = $"/inApps/v1/lookup/{orderId}";
 
         return this.MakeRequest<OrderLookupResponse>(path, HttpMethod.Get)!;
     }
 
-    private static string CreateBearerToken(string keyId, string issuerId, string signingKey, string bundleId)
+    /// <summary>
+    /// Returns a signed JWT token that can be used to make requests to the App Store Server API directly.
+    /// </summary>
+    public string GetApiToken()
     {
         var prvKey = ECDsa.Create();
         prvKey.ImportFromPem(signingKey);
@@ -156,7 +173,7 @@ public class AppStoreServerApiClient(
     )
         where TReturn : class
     {
-        string token = CreateBearerToken(keyId, issuerId, signingKey, bundleId);
+        string token = this.GetApiToken();
 
         UriBuilder builder = new(environment.BaseUrl) { Path = path };
 

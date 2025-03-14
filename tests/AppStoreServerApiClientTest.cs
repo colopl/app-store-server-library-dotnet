@@ -151,4 +151,35 @@ public class AppStoreServerApiClientTest
         Assert.NotNull(response);
         Assert.Equal("signed_transaction_info_value", response.SignedTransactionInfo);
     }
+
+    [Fact]
+    public async Task LookUpOrderId_Success()
+    {
+        const string responseData = """
+            {
+              "status": 1,
+              "signedTransactions": [
+                "signed_transaction_one",
+                "signed_transaction_two"
+              ]
+            }
+            """;
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp
+            .When($"https://local-testing-base-url/inApps/v1/lookup/W002182")
+            .Respond("application/json", responseData);
+
+        AppStoreServerApiClient client = GetAppStoreServerApiClient(mockHttp);
+
+        OrderLookupResponse response = await client.LookUpOrderId("W002182");
+
+        Assert.NotNull(response);
+        Assert.Equal(OrderLookupStatus.Invalid, response.Status);
+        Assert.Collection(
+            response.SignedTransactions,
+            transaction => Assert.Equal("signed_transaction_one", transaction),
+            transaction => Assert.Equal("signed_transaction_two", transaction)
+        );
+    }
 }

@@ -51,7 +51,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -74,7 +74,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -98,7 +98,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -122,7 +122,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -146,7 +146,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -155,7 +155,7 @@ public class SignedDataVerifierTest
             () => dataVerifier.VerifyAndDecodeNotification(testNotificationPayload)
         );
 
-        Assert.Contains("Payload signature could not be verified", exception.Message);
+        Assert.Contains("Chain validation failed", exception.Message);
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -198,7 +198,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -222,12 +222,12 @@ public class SignedDataVerifierTest
            }
          */
         string didRenewNotificationPayload = await File.ReadAllTextAsync(
-            "./MockedSignedData/InputFor_VerifyAndDecode_RenewalInfo_Success.txt"
+            "./MockedSignedData/InputFor_VerifyAndDecode_TransactionInfo_Success.txt"
         );
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             BundleId
         );
@@ -250,7 +250,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             AppStoreEnvironment.Sandbox,
             wrongBundleId
         );
@@ -273,7 +273,7 @@ public class SignedDataVerifierTest
 
         var dataVerifier = new SignedDataVerifier(
             Convert.FromBase64String(RootCaBase64Encoded),
-            true,
+            false,
             wrongEnvironment,
             BundleId
         );
